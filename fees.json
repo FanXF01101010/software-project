@@ -26,6 +26,24 @@
             "localFee": 0.5,
             "longDistanceFee": 0.65,
             "totalFee": 1.15
+        },
+        {
+            "callId": "C0004",
+            "callerNumber": "01088880000",
+            "calleeNumber": "15538825663",
+            "userName": "王五",
+            "localFee": 0.7,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.7
+        },
+        {
+            "callId": "C0005",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "userName": "张三",
+            "localFee": 0.9,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.9
         }
     ]
 }

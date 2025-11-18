@@ -26,6 +26,150 @@
             "durationSeconds": 59,
             "callType": "long-distance",
             "longDistanceAreaCode": "021"
+        },
+        {
+            "callId": "C0004",
+            "callerNumber": "01088880000",
+            "calleeNumber": "15538825663",
+            "startTime": "2025-11-18 09:43:08",
+            "durationSeconds": 329,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0005",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "startTime": "2025-11-18 09:43:12",
+            "durationSeconds": 388,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0006",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "startTime": "2025-11-18 09:43:21",
+            "durationSeconds": 42,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0007",
+            "callerNumber": "01088880000",
+            "calleeNumber": "15520219534",
+            "startTime": "2025-11-18 09:43:29",
+            "durationSeconds": 22,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0008",
+            "callerNumber": "01088880000",
+            "calleeNumber": "15681626117",
+            "startTime": "2025-11-18 09:43:37",
+            "durationSeconds": 309,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0009",
+            "callerNumber": "01088880000",
+            "calleeNumber": "18656846872",
+            "startTime": "2025-11-18 09:43:43",
+            "durationSeconds": 10,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0010",
+            "callerNumber": "01088880000",
+            "calleeNumber": "18651701762",
+            "startTime": "2025-11-18 09:43:51",
+            "durationSeconds": 156,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0011",
+            "callerNumber": "01088880000",
+            "calleeNumber": "15613302285",
+            "startTime": "2025-11-18 09:43:54",
+            "durationSeconds": 100,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0012",
+            "callerNumber": "13800000001",
+            "calleeNumber": "0108706867",
+            "startTime": "2025-11-18 09:44:01",
+            "durationSeconds": 108,
+            "callType": "long-distance",
+            "longDistanceAreaCode": "010"
+        },
+        {
+            "callId": "C0013",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "startTime": "2025-11-18 09:44:05",
+            "durationSeconds": 10,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0014",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000001",
+            "startTime": "2025-11-18 09:44:13",
+            "durationSeconds": 304,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0015",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "startTime": "2025-11-18 09:44:15",
+            "durationSeconds": 112,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0016",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "startTime": "2025-11-18 09:44:18",
+            "durationSeconds": 134,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0017",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "startTime": "2025-11-18 09:44:24",
+            "durationSeconds": 226,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0018",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13800000001",
+            "startTime": "2025-11-18 09:44:29",
+            "durationSeconds": 28,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C0019",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13259796257",
+            "startTime": "2025-11-18 09:44:38",
+            "durationSeconds": 280,
+            "callType": "local",
+            "longDistanceAreaCode": null
         }
     ]
 }
