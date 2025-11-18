@@ -4,10 +4,16 @@
 
 页面 1：用户信息查询
     - 通过姓名查询名下手机号（支持模糊匹配）
+    - 支持选中结果行后 Ctrl + C 复制
 页面 2：话费与话单查询
     - 根据通话记录和费率计算话费，结果保存到 fees.json
     - 话费查询：按电话号码汇总本地费、长途费、总费用
     - 话单查询：按电话号码显示所有通话记录
+
+改动点：
+1. 去掉了“重新计算全部费用”按钮
+2. 增加：程序启动后自动每 5 秒轮询一次 compute_all_fees()
+3. 增加：用户查询表格支持 Ctrl + C 复制选中行内容
 """
 
 import json
@@ -135,13 +141,6 @@ class BillingSystem:
                 return u.get("userName", "未知用户")
         return "未知用户"
 
-    def find_user_by_phone(self, phone_number: str):
-        """根据手机号查用户，存在则返回用户字典，不存在返回 None。"""
-        for u in self.users.get("users", []):
-            if u.get("phoneNumber") == phone_number:
-                return u
-        return None
-
     def find_users_by_name(self, name: str):
         """
         根据姓名（支持模糊匹配）查询所有用户。
@@ -258,6 +257,9 @@ class BillingApp(tk.Tk):
 
         self._create_widgets()
 
+        # 启动时就开启 5 秒一次的自动计费轮询
+        self.start_auto_recompute()
+
     def _create_widgets(self):
         # 使用 Notebook 创建多页面
         notebook = ttk.Notebook(self)
@@ -273,6 +275,21 @@ class BillingApp(tk.Tk):
 
         self._build_page_user()
         self._build_page_billing()
+
+    # ---------- 自动轮询计费 ----------
+
+    def start_auto_recompute(self):
+        """
+        每 5 秒自动重新计算一次费用。
+        使用 Tkinter 的 after，不阻塞界面。
+        """
+        try:
+            self.billing.compute_all_fees()
+        except Exception as e:
+            # 不弹框打扰用户，只简单打印
+            print("自动计算费用出错：", e)
+        # 5000 毫秒后再次调用自己
+        self.after(5000, self.start_auto_recompute)
 
     # ---------- 页面 1：用户信息查询 ----------
 
@@ -309,10 +326,14 @@ class BillingApp(tk.Tk):
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.user_tree.configure(yscrollcommand=scrollbar.set)
 
+        # 绑定 Ctrl + C 复制选中行内容
+        self.user_tree.bind("<Control-c>", self.on_copy_user_row)
+
         # 底部提示
         self.user_hint_label = ttk.Label(
             self.page_user,
-            text="提示：支持模糊查询，例如输入“张”可列出所有姓名中包含“张”的用户。",
+            text="提示：支持模糊查询，例如输入“张”可列出所有姓名中包含“张”的用户；"
+                 "选中一行后按 Ctrl + C 可复制该行信息。",
             foreground="gray"
         )
         self.user_hint_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=15, pady=5)
@@ -346,6 +367,32 @@ class BillingApp(tk.Tk):
         for item in self.user_tree.get_children():
             self.user_tree.delete(item)
 
+    def on_copy_user_row(self, event):
+        """
+        当按下 Ctrl + C 时，将当前选中的行复制到剪贴板。
+        格式：用户ID\t用户名\t手机号
+        """
+        selected = self.user_tree.selection()
+        if not selected:
+            return
+        lines = []
+        for item in selected:
+            values = self.user_tree.item(item, "values")
+            # 用制表符拼接，方便粘贴到 Excel / 文本
+            line = "\t".join(str(v) for v in values)
+            lines.append(line)
+        text = "\n".join(lines)
+        try:
+            self.clipboard_clear()
+            self.clipboard_append(text)
+            # 轻微提示（不弹框，避免打扰）
+            self.user_hint_label.config(
+                text=f"已复制到剪贴板：{text}    （可以在其他地方 Ctrl + V 粘贴）",
+                foreground="green"
+            )
+        except Exception as e:
+            print("复制到剪贴板失败：", e)
+
     # ---------- 页面 2：话费与话单查询 ----------
 
     def _build_page_billing(self):
@@ -357,14 +404,12 @@ class BillingApp(tk.Tk):
         self.phone_entry = ttk.Entry(top_frame, width=25)
         self.phone_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        btn_compute = ttk.Button(top_frame, text="重新计算全部费用", command=self.on_compute_fees)
-        btn_compute.grid(row=0, column=2, padx=10, pady=5)
-
+        # 不再需要“重新计算全部费用”按钮
         btn_query_fee = ttk.Button(top_frame, text="话费查询", command=self.on_query_fee)
-        btn_query_fee.grid(row=0, column=3, padx=10, pady=5)
+        btn_query_fee.grid(row=0, column=2, padx=10, pady=5)
 
         btn_query_calls = ttk.Button(top_frame, text="话单查询", command=self.on_query_calls)
-        btn_query_calls.grid(row=0, column=4, padx=10, pady=5)
+        btn_query_calls.grid(row=0, column=3, padx=10, pady=5)
 
         # 中间：话费查询结果（文本显示）
         summary_frame = ttk.LabelFrame(self.page_billing, text="话费查询结果", padding=10)
@@ -372,7 +417,8 @@ class BillingApp(tk.Tk):
 
         self.summary_label = ttk.Label(
             summary_frame,
-            text="在上方输入电话号码，然后点击“话费查询”或“话单查询”。",
+            text="在上方输入电话号码，然后点击“话费查询”或“话单查询”。\n"
+                 "提示：系统每 5 秒自动刷新一次费用文件。",
             font=("微软雅黑", 11)
         )
         self.summary_label.pack(anchor=tk.W)
@@ -403,14 +449,6 @@ class BillingApp(tk.Tk):
 
     # ---------- 页面 2 按钮事件 ----------
 
-    def on_compute_fees(self):
-        """计算全部费用并保存到 fees.json。"""
-        try:
-            self.billing.compute_all_fees()
-            messagebox.showinfo("提示", "全部通话费用已重新计算并保存到 fees.json。")
-        except Exception as e:
-            messagebox.showerror("错误", f"计算费用时发生错误：{e}")
-
     def on_query_fee(self):
         """话费查询：汇总本地费、长途费与总计。"""
         phone = self.phone_entry.get().strip()
@@ -427,7 +465,8 @@ class BillingApp(tk.Tk):
                     f"用户名：{user_name}    电话号码：{phone}\n"
                     f"本地话费合计：{local_sum:.2f} 元    "
                     f"长途话费合计：{long_sum:.2f} 元    "
-                    f"话费总计：{total_sum:.2f} 元"
+                    f"话费总计：{total_sum:.2f} 元\n"
+                    f"（费用文件会每 5 秒自动刷新一次）"
                 )
             self.summary_label.config(text=msg)
         except Exception as e:
