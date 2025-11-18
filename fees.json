@@ -1,0 +1,31 @@
+{
+    "fees": [
+        {
+            "callId": "C001",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 1.8,
+            "totalFee": 2.3
+        },
+        {
+            "callId": "C002",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C003",
+            "callerNumber": "13800000002",
+            "calleeNumber": "02166668888",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.65,
+            "totalFee": 1.15
+        }
+    ]
+}

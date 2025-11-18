@@ -1,0 +1,19 @@
+{
+    "longDistanceRates": [
+        {
+            "areaCode": "010",
+            "areaName": "北京",
+            "ratePerMinute": 0.6
+        },
+        {
+            "areaCode": "021",
+            "areaName": "上海",
+            "ratePerMinute": 0.65
+        },
+        {
+            "areaCode": "020",
+            "areaName": "广州",
+            "ratePerMinute": 0.7
+        }
+    ]
+}

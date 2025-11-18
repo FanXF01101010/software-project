@@ -1,0 +1,31 @@
+{
+    "callRecords": [
+        {
+            "callId": "C001",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "startTime": "2025-11-18 09:00:10",
+            "durationSeconds": 125,
+            "callType": "long-distance",
+            "longDistanceAreaCode": "010"
+        },
+        {
+            "callId": "C002",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "startTime": "2025-11-18 10:15:05",
+            "durationSeconds": 170,
+            "callType": "local",
+            "longDistanceAreaCode": null
+        },
+        {
+            "callId": "C003",
+            "callerNumber": "13800000002",
+            "calleeNumber": "02166668888",
+            "startTime": "2025-11-18 11:20:30",
+            "durationSeconds": 59,
+            "callType": "long-distance",
+            "longDistanceAreaCode": "021"
+        }
+    ]
+}

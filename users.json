@@ -1,0 +1,19 @@
+{
+    "users": [
+        {
+            "userId": "U001",
+            "userName": "张三",
+            "phoneNumber": "13800000001"
+        },
+        {
+            "userId": "U002",
+            "userName": "李四",
+            "phoneNumber": "13800000002"
+        },
+        {
+            "userId": "U003",
+            "userName": "王五",
+            "phoneNumber": "01088880000"
+        }
+    ]
+}
