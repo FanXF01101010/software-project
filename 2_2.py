@@ -1,21 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-模拟电信计费系统（Python + Tkinter + JSON）
-
-页面 1：用户信息查询
-    - 通过姓名查询名下手机号（支持模糊匹配）
-    - 支持选中结果行后 Ctrl + C 复制
-页面 2：话费与话单查询
-    - 根据通话记录和费率计算话费，结果保存到 fees.json
-    - 话费查询：按电话号码汇总本地费、长途费、总费用
-    - 话单查询：按电话号码显示所有通话记录
-
-改动点：
-1. 去掉了“重新计算全部费用”按钮
-2. 增加：程序启动后自动每 5 秒轮询一次 compute_all_fees()
-3. 增加：用户查询表格支持 Ctrl + C 复制选中行内容
-"""
-
 import json
 import os
 import math
@@ -136,6 +118,7 @@ class BillingSystem:
     # ---------- 用户相关 ----------
 
     def get_user_name(self, phone_number: str) -> str:
+        """根据手机号返回用户名，找不到则返回“未知用户”"""
         for u in self.users.get("users", []):
             if u.get("phoneNumber") == phone_number:
                 return u.get("userName", "未知用户")
@@ -167,6 +150,9 @@ class BillingSystem:
 
     def compute_all_fees(self):
         """根据通话记录和长途费率计算所有通话费用，并保存到 fees.json。"""
+        # 重新加载通话记录，防止外部脚本更新 calls.json 后这里还是旧数据
+        self.calls = self._load_json(CALLS_FILE)
+
         fees_list = []
         for call in self.calls.get("callRecords", []):
             call_id = call.get("callId")
@@ -190,13 +176,13 @@ class BillingSystem:
             long_fee = round(long_fee, 2)
             total_fee = round(local_fee + long_fee, 2)
 
-            user_name = self.get_user_name(caller_number)
+            caller_name = self.get_user_name(caller_number)
 
             fees_list.append({
                 "callId": call_id,
                 "callerNumber": caller_number,
                 "calleeNumber": callee_number,
-                "userName": user_name,
+                "userName": caller_name,
                 "localFee": local_fee,
                 "longDistanceFee": long_fee,
                 "totalFee": total_fee
@@ -227,17 +213,17 @@ class BillingSystem:
         return user_name, local_sum, long_sum, total_sum
 
     def query_call_records(self, phone_number: str):
-        """
-        话单查询：返回记录列表
-        """
-        user_name = self.get_user_name(phone_number)
+        caller_name = self.get_user_name(phone_number)
         records = []
         for call in self.calls.get("callRecords", []):
             if call.get("callerNumber") == phone_number:
+                callee_number = call.get("calleeNumber")
+                callee_name = self.get_user_name(callee_number)
                 records.append({
-                    "userName": user_name,
+                    "userName": caller_name,
                     "callerNumber": call.get("callerNumber"),
-                    "calleeNumber": call.get("calleeNumber"),
+                    "calleeNumber": callee_number,
+                    "calleeName": callee_name,
                     "durationSeconds": call.get("durationSeconds"),
                     "callType": call.get("callType", "local")
                 })
@@ -250,7 +236,7 @@ class BillingApp(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("模拟电信计费系统")
-        self.geometry("950x620")
+        self.geometry("1000x650")
         self.resizable(False, False)
 
         self.billing = BillingSystem()
@@ -279,16 +265,10 @@ class BillingApp(tk.Tk):
     # ---------- 自动轮询计费 ----------
 
     def start_auto_recompute(self):
-        """
-        每 5 秒自动重新计算一次费用。
-        使用 Tkinter 的 after，不阻塞界面。
-        """
         try:
             self.billing.compute_all_fees()
         except Exception as e:
-            # 不弹框打扰用户，只简单打印
             print("自动计算费用出错：", e)
-        # 5000 毫秒后再次调用自己
         self.after(5000, self.start_auto_recompute)
 
     # ---------- 页面 1：用户信息查询 ----------
@@ -326,14 +306,14 @@ class BillingApp(tk.Tk):
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.user_tree.configure(yscrollcommand=scrollbar.set)
 
-        # 绑定 Ctrl + C 复制选中行内容
+        # 绑定 Ctrl + C 复制选中行中的“手机号”
         self.user_tree.bind("<Control-c>", self.on_copy_user_row)
 
         # 底部提示
         self.user_hint_label = ttk.Label(
             self.page_user,
             text="提示：支持模糊查询，例如输入“张”可列出所有姓名中包含“张”的用户；"
-                 "选中一行后按 Ctrl + C 可复制该行信息。",
+                 "选中一行后按 Ctrl + C 只会复制该行的手机号。",
             foreground="gray"
         )
         self.user_hint_label.pack(side=tk.BOTTOM, anchor=tk.W, padx=15, pady=5)
@@ -366,28 +346,30 @@ class BillingApp(tk.Tk):
     def on_clear_user_table(self):
         for item in self.user_tree.get_children():
             self.user_tree.delete(item)
+        self.user_hint_label.config(
+            text="提示：支持模糊查询，例如输入“张”可列出所有姓名中包含“张”的用户；"
+                 "选中一行后按 Ctrl + C 只会复制该行的手机号。",
+            foreground="gray"
+        )
 
     def on_copy_user_row(self, event):
-        """
-        当按下 Ctrl + C 时，将当前选中的行复制到剪贴板。
-        格式：用户ID\t用户名\t手机号
-        """
         selected = self.user_tree.selection()
         if not selected:
             return
-        lines = []
+        phones = []
         for item in selected:
             values = self.user_tree.item(item, "values")
-            # 用制表符拼接，方便粘贴到 Excel / 文本
-            line = "\t".join(str(v) for v in values)
-            lines.append(line)
-        text = "\n".join(lines)
+            # values: (userId, userName, phoneNumber)
+            if len(values) >= 3:
+                phones.append(str(values[2]))
+        if not phones:
+            return
+        text = "\n".join(phones)
         try:
             self.clipboard_clear()
             self.clipboard_append(text)
-            # 轻微提示（不弹框，避免打扰）
             self.user_hint_label.config(
-                text=f"已复制到剪贴板：{text}    （可以在其他地方 Ctrl + V 粘贴）",
+                text=f"已复制手机号到剪贴板：{text}",
                 foreground="green"
             )
         except Exception as e:
@@ -400,16 +382,28 @@ class BillingApp(tk.Tk):
         top_frame = ttk.Frame(self.page_billing, padding=10)
         top_frame.pack(side=tk.TOP, fill=tk.X)
 
+        # 第一行：电话号输入 + 按钮
         ttk.Label(top_frame, text="电话号码：").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.phone_entry = ttk.Entry(top_frame, width=25)
         self.phone_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        # 不再需要“重新计算全部费用”按钮
         btn_query_fee = ttk.Button(top_frame, text="话费查询", command=self.on_query_fee)
         btn_query_fee.grid(row=0, column=2, padx=10, pady=5)
 
         btn_query_calls = ttk.Button(top_frame, text="话单查询", command=self.on_query_calls)
         btn_query_calls.grid(row=0, column=3, padx=10, pady=5)
+
+        # 第二行：新增“按姓名查号码”
+        ttk.Label(top_frame, text="或姓名：").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        self.name_for_fee_entry = ttk.Entry(top_frame, width=25)
+        self.name_for_fee_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        btn_name_to_phone = ttk.Button(
+            top_frame,
+            text="根据姓名查号码并填入",
+            command=self.on_name_to_phone
+        )
+        btn_name_to_phone.grid(row=1, column=2, padx=10, pady=5, columnspan=2, sticky=tk.W)
 
         # 中间：话费查询结果（文本显示）
         summary_frame = ttk.LabelFrame(self.page_billing, text="话费查询结果", padding=10)
@@ -418,6 +412,7 @@ class BillingApp(tk.Tk):
         self.summary_label = ttk.Label(
             summary_frame,
             text="在上方输入电话号码，然后点击“话费查询”或“话单查询”。\n"
+                 "也可以先在此页输入姓名，通过“根据姓名查号码并填入”按钮获取电话号码。\n"
                  "提示：系统每 5 秒自动刷新一次费用文件。",
             font=("微软雅黑", 11)
         )
@@ -427,17 +422,21 @@ class BillingApp(tk.Tk):
         records_frame = ttk.LabelFrame(self.page_billing, text="话单查询结果", padding=10)
         records_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True, padx=10, pady=10)
 
-        columns = ("userName", "callerNumber", "calleeNumber", "durationSeconds", "callType")
+        # 新增 calleeName 列
+        columns = ("userName", "callerNumber", "calleeNumber", "calleeName",
+                   "durationSeconds", "callType")
         self.tree = ttk.Treeview(records_frame, columns=columns, show="headings", height=15)
-        self.tree.heading("userName", text="用户名")
+        self.tree.heading("userName", text="主叫用户名")
         self.tree.heading("callerNumber", text="主叫号码")
         self.tree.heading("calleeNumber", text="被叫号码")
+        self.tree.heading("calleeName", text="被叫用户名")
         self.tree.heading("durationSeconds", text="通话时长(秒)")
         self.tree.heading("callType", text="通话类型")
 
-        self.tree.column("userName", width=100, anchor=tk.CENTER)
+        self.tree.column("userName", width=110, anchor=tk.CENTER)
         self.tree.column("callerNumber", width=150, anchor=tk.CENTER)
         self.tree.column("calleeNumber", width=150, anchor=tk.CENTER)
+        self.tree.column("calleeName", width=110, anchor=tk.CENTER)
         self.tree.column("durationSeconds", width=120, anchor=tk.CENTER)
         self.tree.column("callType", width=100, anchor=tk.CENTER)
 
@@ -447,13 +446,45 @@ class BillingApp(tk.Tk):
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.tree.configure(yscrollcommand=scrollbar.set)
 
+    # ---------- 页面 2：姓名→号码 ----------
+
+    def on_name_to_phone(self):
+        name = self.name_for_fee_entry.get().strip()
+        if not name:
+            messagebox.showwarning("提示", "请先输入姓名！")
+            return
+
+        try:
+            users = self.billing.find_users_by_name(name)
+            if not users:
+                messagebox.showinfo("提示", f"未找到姓名包含“{name}”的用户。")
+                return
+            if len(users) == 1:
+                u = users[0]
+                phone = u.get("phoneNumber", "")
+                self.phone_entry.delete(0, tk.END)
+                self.phone_entry.insert(0, phone)
+                self.summary_label.config(
+                    text=f"已根据姓名找到用户：{u.get('userName')}，电话号码：{phone}\n"
+                         f"你可以现在点击“话费查询”或“话单查询”。"
+                )
+            else:
+                # 多个匹配，列出候选
+                info_lines = [f"{u.get('userName')} - {u.get('phoneNumber')}" for u in users]
+                info_text = "\n".join(info_lines)
+                messagebox.showinfo(
+                    "提示",
+                    f"找到多个姓名包含“{name}”的用户，请输入更精确的姓名：\n\n{info_text}"
+                )
+        except Exception as e:
+            messagebox.showerror("错误", f"根据姓名查号码时发生错误：{e}")
+
     # ---------- 页面 2 按钮事件 ----------
 
     def on_query_fee(self):
-        """话费查询：汇总本地费、长途费与总计。"""
         phone = self.phone_entry.get().strip()
         if not phone:
-            messagebox.showwarning("提示", "请先输入电话号码！")
+            messagebox.showwarning("提示", "请先输入电话号码（或先用姓名查号码并填入）！")
             return
 
         try:
@@ -473,10 +504,9 @@ class BillingApp(tk.Tk):
             messagebox.showerror("错误", f"查询话费时发生错误：{e}")
 
     def on_query_calls(self):
-        """话单查询：在表格中显示通话记录。"""
         phone = self.phone_entry.get().strip()
         if not phone:
-            messagebox.showwarning("提示", "请先输入电话号码！")
+            messagebox.showwarning("提示", "请先输入电话号码（或先用姓名查号码并填入）！")
             return
 
         try:
@@ -494,10 +524,11 @@ class BillingApp(tk.Tk):
                     "",
                     tk.END,
                     values=(
-                        rec["userName"],
-                        rec["callerNumber"],
-                        rec["calleeNumber"],
-                        rec["durationSeconds"],
+                        rec["userName"],         # 主叫用户名
+                        rec["callerNumber"],     # 主叫号码
+                        rec["calleeNumber"],     # 被叫号码
+                        rec["calleeName"],       # 被叫用户名（新增）
+                        rec["durationSeconds"],  # 通话时长
                         "长途" if rec["callType"] == "long-distance" else "本地"
                     )
                 )

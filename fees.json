@@ -30,20 +30,371 @@
         {
             "callId": "C0004",
             "callerNumber": "01088880000",
-            "calleeNumber": "15538825663",
+            "calleeNumber": "13900000003",
             "userName": "王五",
+            "localFee": 0.9,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.9
+        },
+        {
+            "callId": "C0005",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "userName": "李四",
             "localFee": 0.7,
             "longDistanceFee": 0.0,
             "totalFee": 0.7
         },
         {
-            "callId": "C0005",
+            "callId": "C0006",
+            "callerNumber": "13900000003",
+            "calleeNumber": "13800000002",
+            "userName": "张三丰",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0007",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13900000003",
+            "userName": "李四",
+            "localFee": 0.9,
+            "longDistanceFee": 5.6,
+            "totalFee": 6.5
+        },
+        {
+            "callId": "C0008",
+            "callerNumber": "13900000003",
+            "calleeNumber": "13800000001",
+            "userName": "张三丰",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0009",
+            "callerNumber": "13900000003",
+            "calleeNumber": "01088880000",
+            "userName": "张三丰",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0010",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.7,
+            "totalFee": 1.2
+        },
+        {
+            "callId": "C0011",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0012",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0013",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13800000001",
+            "userName": "李四",
+            "localFee": 0.7,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.7
+        },
+        {
+            "callId": "C0014",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000001",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0015",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13900000003",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 0.7,
+            "totalFee": 1.2
+        },
+        {
+            "callId": "C0016",
             "callerNumber": "13800000001",
             "calleeNumber": "13800000002",
             "userName": "张三",
             "localFee": 0.9,
             "longDistanceFee": 0.0,
             "totalFee": 0.9
+        },
+        {
+            "callId": "C0017",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.6,
+            "totalFee": 1.1
+        },
+        {
+            "callId": "C0018",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0019",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000002",
+            "userName": "王五",
+            "localFee": 1.1,
+            "longDistanceFee": 0.0,
+            "totalFee": 1.1
+        },
+        {
+            "callId": "C0020",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000002",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0021",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0022",
+            "callerNumber": "13900000003",
+            "calleeNumber": "01088880000",
+            "userName": "张三丰",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0023",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13900000003",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0024",
+            "callerNumber": "13900000003",
+            "calleeNumber": "13800000001",
+            "userName": "张三丰",
+            "localFee": 0.9,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.9
+        },
+        {
+            "callId": "C0025",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13900000003",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0026",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "userName": "张三",
+            "localFee": 0.9,
+            "longDistanceFee": 5.4,
+            "totalFee": 6.3
+        },
+        {
+            "callId": "C0027",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13900000003",
+            "userName": "张三",
+            "localFee": 0.9,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.9
+        },
+        {
+            "callId": "C0028",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13800000001",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0029",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13900000003",
+            "userName": "李四",
+            "localFee": 1.1,
+            "longDistanceFee": 0.0,
+            "totalFee": 1.1
+        },
+        {
+            "callId": "C0030",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0031",
+            "callerNumber": "13900000003",
+            "calleeNumber": "13800000002",
+            "userName": "张三丰",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0032",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13900000003",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0033",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13900000003",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0034",
+            "callerNumber": "13800000001",
+            "calleeNumber": "01088880000",
+            "userName": "张三",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0035",
+            "callerNumber": "13800000001",
+            "calleeNumber": "13800000002",
+            "userName": "张三",
+            "localFee": 0.9,
+            "longDistanceFee": 5.6,
+            "totalFee": 6.5
+        },
+        {
+            "callId": "C0036",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000002",
+            "userName": "王五",
+            "localFee": 0.9,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.9
+        },
+        {
+            "callId": "C0037",
+            "callerNumber": "13800000002",
+            "calleeNumber": "01088880000",
+            "userName": "李四",
+            "localFee": 0.7,
+            "longDistanceFee": 2.6,
+            "totalFee": 3.3
+        },
+        {
+            "callId": "C0038",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13900000003",
+            "userName": "李四",
+            "localFee": 0.7,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.7
+        },
+        {
+            "callId": "C0039",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13900000003",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0040",
+            "callerNumber": "13800000002",
+            "calleeNumber": "13800000001",
+            "userName": "李四",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0041",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13800000002",
+            "userName": "王五",
+            "localFee": 0.7,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.7
+        },
+        {
+            "callId": "C0042",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13900000003",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
+        },
+        {
+            "callId": "C0043",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13900000003",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 1.4,
+            "totalFee": 1.9
+        },
+        {
+            "callId": "C0044",
+            "callerNumber": "01088880000",
+            "calleeNumber": "13900000003",
+            "userName": "王五",
+            "localFee": 0.5,
+            "longDistanceFee": 0.0,
+            "totalFee": 0.5
         }
     ]
 }

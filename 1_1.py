@@ -11,7 +11,6 @@ class ScoreApp:
 
         # ========== 全局样式设置 ==========
         style = ttk.Style()
-        # 使用较现代的主题（没有就退回默认）
         try:
             style.theme_use("clam")
         except tk.TclError:
@@ -88,13 +87,13 @@ class ScoreApp:
         card = ttk.Frame(main_frame, style="Card.TFrame", padding=(18, 16, 18, 16))
         card.pack(fill=tk.BOTH, expand=True)
 
-        # 标题（本来就是居中）
+        # 标题
         title_label = ttk.Label(card, text="班级分数统计", style="Title.TLabel")
         title_label.pack(anchor="center", pady=(0, 10))
 
-        # ===== 上方输入区域（整体居中）=====
+        # ===== 上方输入区域=====
         frame_top = ttk.Frame(card, style="Card.TFrame")
-        frame_top.pack(pady=(6, 4))  # 不再 fill=X，让它按内容居中
+        frame_top.pack(pady=(6, 4))  
 
         inner_top = ttk.Frame(frame_top, style="Card.TFrame")
         inner_top.pack(anchor="center")  # 整块输入区域居中
@@ -112,7 +111,7 @@ class ScoreApp:
         # 回车键也可以添加
         self.entry_score.bind("<Return>", lambda event: self.add_student())
 
-        # ===== 按钮区域（整体居中）=====
+        # ===== 按钮区域 =====
         frame_btn = ttk.Frame(card, style="Card.TFrame")
         frame_btn.pack(pady=(8, 4))  # 不再 fill=X
 
@@ -125,7 +124,7 @@ class ScoreApp:
         btn_clear = ttk.Button(frame_btn, text="清空列表", style="Secondary.TButton", command=self.clear_students)
         btn_clear.pack(side=tk.LEFT)
 
-        # ===== 表格显示区域（还是铺满）=====
+        # ===== 表格显示区域 =====
         frame_table = ttk.Frame(card, style="Card.TFrame")
         frame_table.pack(fill=tk.BOTH, expand=True, pady=(8, 4))
 
@@ -163,7 +162,7 @@ class ScoreApp:
         self.tree.tag_configure("oddrow", background="#ffffff")
         self.tree.tag_configure("evenrow", background="#f9fafb")
 
-        # 底部提示（文字居中）
+        # 底部提示
         hint = ttk.Label(
             card,
             text="说明：输入姓名和分数后点击“添加（自动降序）”；用鼠标选中要删除的行点击“删除选中成绩”。",
@@ -199,8 +198,8 @@ class ScoreApp:
             messagebox.showwarning("提示", "分数必须是数字！")
             return
 
-        if score < 0 or score > 100:
-            messagebox.showwarning("提示", "分数应在 0~100 之间！")
+        if score < 0 :
+            messagebox.showwarning("提示", "分数应为正数！")
             return
 
         # 添加到列表
@@ -233,7 +232,7 @@ class ScoreApp:
             _, name, score_str = values
             score = float(score_str)
 
-            # 删除第一条匹配到的记录（考虑可能重名且同分）
+            # 删除第一条匹配到的记录
             for i, stu in enumerate(self.students):
                 if stu["name"] == name and stu["score"] == score:
                     del self.students[i]

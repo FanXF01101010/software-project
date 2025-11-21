@@ -15,7 +15,7 @@ class GradeSystemApp:
         # 当前筛选后的记录
         self.current_records = []
 
-        # ===== 样式设置（简洁一点，类似 Edge 浅色风格）=====
+        # ===== 样式设置 =====
         style = ttk.Style()
         try:
             style.theme_use("clam")
@@ -351,7 +351,7 @@ class GradeSystemApp:
         else:
             return "不及格"
 
-    # ===== 清空结果显示（不清空文件数据）=====
+    # ===== 清空结果显示 =====
     def clear_results(self):
         for item in self.tree.get_children():
             self.tree.delete(item)

@@ -5,10 +5,7 @@
 与计费 GUI 搭配使用：
 - 计费 GUI 每 5 秒自动重算话费
 - 本脚本负责源数据 calls.json 的“实时”增长
-
-使用方法：
-    python realtime_call_generator.py
-按 Ctrl + C 可以随时停止程序。
+- 【修改】：所有号码（主叫 & 被叫）都来自 users.json，不再生成未知用户
 """
 
 import json
@@ -93,34 +90,17 @@ def current_time_str():
     return now.strftime("%Y-%m-%d %H:%M:%S")
 
 
-def random_local_callee(users, caller_number):
+def random_other_user_phone(users, caller_number):
     """
-    生成一个本地被叫号码：
-    - 50% 概率：在系统其他用户中随机选一个手机号
-    - 否则：生成一个随机手机号
+    从已知用户中随机选一个“被叫”号码：
+    - 优先选“不是自己”的手机号
+    - 如果只有一个用户（极端情况），就允许自己给自己打（至少不会生成未知用户）
     """
-    if users and random.random() < 0.5:
-        candidates = [u["phoneNumber"] for u in users if u["phoneNumber"] != caller_number]
-        if candidates:
-            return random.choice(candidates)
-
-    # 否则随机生成一个以 13/15/18 开头的手机号
-    prefix = random.choice(["130", "131", "132", "155", "156", "186", "187"])
-    suffix = random.randint(0, 99999999)
-    return f"{prefix}{suffix:08d}"
-
-
-def random_long_distance_callee(area_codes):
-    """
-    生成一个长途被叫号码，返回 (calleeNumber, areaCode)：
-    - 随机选一个区号
-    - 号码形式举例：01087654321
-    """
-    area_code = random.choice(area_codes)
-    length = random.choice([7, 8])  # 区号后面 7 或 8 位
-    suffix = random.randint(10 ** (length - 1), 10 ** length - 1)
-    callee = f"{area_code}{suffix}"
-    return callee, area_code
+    others = [u for u in users if u.get("phoneNumber") != caller_number]
+    if others:
+        return random.choice(others).get("phoneNumber")
+    # 没有别人，只能自己
+    return caller_number
 
 
 # ===== 主逻辑：实时生成通话记录 =====
@@ -141,9 +121,7 @@ def prepare_environment():
     # 根据现有记录确定下一个 callId 序号
     next_index = 1
     if call_records:
-        # 取最后一条记录的 callId，尝试解析数字
         last_id = call_records[-1].get("callId", "")
-        # 格式一般是 C0001
         try:
             num_part = int(last_id.strip("C"))
             next_index = num_part + 1
@@ -159,6 +137,7 @@ def realtime_generate_calls():
     """
     无限循环，每隔随机时间生成一条新通话记录，写入 calls.json。
     按 Ctrl + C 可以终止。
+    所有号码（主叫 & 被叫）均来自 users.json。
     """
     users, area_codes, call_records, next_index = prepare_environment()
 
@@ -168,6 +147,7 @@ def realtime_generate_calls():
 
     print("===== 实时通话模拟开始 =====")
     print(f"每条通话之间的随机间隔：{MIN_INTERVAL} ~ {MAX_INTERVAL} 秒")
+    print("所有主叫 / 被叫号码均来自 users.json，不会出现未知用户。")
     print("按 Ctrl + C 可以停止。")
     print("----------------------------------------")
 
@@ -182,16 +162,18 @@ def realtime_generate_calls():
             next_index += 1
 
             caller = random.choice(users)
-            caller_number = caller["phoneNumber"]
+            caller_number = caller.get("phoneNumber")
 
             # 70% 本地通话，30% 长途通话
             if random.random() < 0.7:
                 call_type = "local"
-                callee_number = random_local_callee(users, caller_number)
+                callee_number = random_other_user_phone(users, caller_number)
                 area_code = None
             else:
                 call_type = "long-distance"
-                callee_number, area_code = random_long_distance_callee(area_codes)
+                callee_number = random_other_user_phone(users, caller_number)
+                # 这里 area_code 与号码本身不强绑定，只是为了给计费用费率
+                area_code = random.choice(area_codes)
 
             duration_seconds = random_duration_seconds()
             start_time = current_time_str()

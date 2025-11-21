@@ -7,7 +7,6 @@ class EncryptApp:
         self.root = root
         self.root.title("加密 / 解密 工具（Ci = mi + K）")
 
-        # 更大的初始尺寸，并尝试最大化
         self.root.geometry("1100x650")
         try:
             self.root.state("zoomed")
@@ -23,7 +22,6 @@ class EncryptApp:
         except tk.TclError:
             pass
 
-        # 模拟 Edge 的浅色风格
         bg_main = "#f3f4f6"   # 整体背景：浅灰
         bg_card = "#ffffff"   # 中央卡片：纯白
         accent = "#2563eb"    # 主色：蓝色

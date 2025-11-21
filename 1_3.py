@@ -68,13 +68,13 @@ class TextEditorApp:
         card = ttk.Frame(main_frame, style="Card.TFrame", padding=(8, 6))
         card.pack(fill=tk.BOTH, expand=True)
 
-        # ====== 字体工具栏（像 Word 顶部那一行）======
+        # ====== 字体工具栏 ======
         toolbar = ttk.Frame(card, style="Card.TFrame")
         toolbar.pack(fill=tk.X, pady=(0, 6))
 
         ttk.Label(toolbar, text="字体：", style="TLabel").pack(side=tk.LEFT, padx=(0, 4))
 
-        # 常用字体列表（可以根据自己系统情况调整）
+        # 常用字体列表
         common_fonts = ["Consolas", "微软雅黑", "宋体", "黑体",
                         "Times New Roman", "Arial"]
 
@@ -103,13 +103,13 @@ class TextEditorApp:
         self.font_size_box.bind("<<ComboboxSelected>>", self.on_font_change)
         self.font_size_box.bind("<Return>", self.on_font_change)  # 手动输入数字回车也生效
 
-        # ====== 文本编辑区（带滚动条）======
+        # ====== 文本编辑区 ======
         text_frame = ttk.Frame(card, style="Card.TFrame")
         text_frame.pack(fill=tk.BOTH, expand=True)
 
         self.text = tk.Text(
             text_frame,
-            wrap="word",   # 始终自动换行（不再提供开关）
+            wrap="word",   # 始终自动换行
             undo=True,
             font=(self.font_family, self.font_size),
             relief="flat",
@@ -130,7 +130,7 @@ class TextEditorApp:
         self.context_menu.add_separator()
         self.context_menu.add_command(label="全选", command=self.select_all)
 
-        # 右键绑定（Windows 一般是 Button-3）
+        # 右键绑定
         self.text.bind("<Button-3>", self.show_context_menu)
 
         # ====== 状态栏：当前文件名 & 字数 ======

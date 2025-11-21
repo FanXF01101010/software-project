@@ -139,7 +139,7 @@ class TypingApp:
         display_frame = ttk.Frame(icon_frame, style="Card.TFrame")
         display_frame.pack(anchor="center", pady=(0, 0))
 
-        # 左侧圆盘（更小一点）
+        # 左侧圆盘
         self.icon_canvas = tk.Canvas(
             display_frame,
             width=170,
@@ -162,7 +162,7 @@ class TypingApp:
             fill="#4b5563"
         )
 
-        # 右侧评价文字（始终可见）
+        # 右侧评价文字
         right_frame = ttk.Frame(display_frame, style="Card.TFrame")
         right_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
@@ -176,7 +176,7 @@ class TypingApp:
         )
         self.accuracy_label.pack(anchor="w")
 
-        # 底部提示（小号）
+        # 底部提示
         ttk.Label(
             card,
             text="说明：点击“随机生成字符串”获得练习内容；输入后按“判定正确率”或回车键即可。",

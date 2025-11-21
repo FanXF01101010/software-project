@@ -7,7 +7,7 @@ class BaseConverterApp:
         self.root = root
         self.root.title("进制转换器")
 
-        # 窗口尺寸（稍大一些），并尝试最大化
+        # 窗口尺寸  尝试最大化
         self.root.geometry("1000x550")
         try:
             self.root.state("zoomed")
@@ -15,7 +15,7 @@ class BaseConverterApp:
             pass
         self.root.minsize(800, 480)
 
-        # ========== 样式（沿用 Edge 风格） ==========
+        # ========== 样式  ==========
         style = ttk.Style()
         try:
             style.theme_use("clam")
