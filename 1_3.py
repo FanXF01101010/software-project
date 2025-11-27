@@ -303,7 +303,7 @@ class TextEditorApp:
             self.update_char_count()
             self.text.edit_modified(False)
 
-
+#主程序入口
 if __name__ == "__main__":
     root = tk.Tk()
     app = TextEditorApp(root)

@@ -253,7 +253,7 @@ class EncryptApp:
         self.text_output.delete("1.0", tk.END)
         self.entry_key.focus()
 
-
+#主程序入口
 if __name__ == "__main__":
     root = tk.Tk()
     app = EncryptApp(root)

@@ -180,7 +180,6 @@ class ScoreApp:
         self.entry_name.focus()
 
     def add_student(self):
-        """添加一个学生到列表，并自动按分数降序排序"""
         name = self.name_var.get().strip()
         score_str = self.score_var.get().strip()
 
@@ -243,13 +242,11 @@ class ScoreApp:
         self.refresh_table()
 
     def clear_students(self):
-        """清空所有学生数据"""
         if messagebox.askyesno("确认", "确定要清空所有记录吗？"):
             self.students.clear()
             self.refresh_table()
 
     def refresh_table(self):
-        """根据 self.students 刷新表格内容"""
         # 清空表格
         for item in self.tree.get_children():
             self.tree.delete(item)

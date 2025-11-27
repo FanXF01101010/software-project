@@ -1,6 +1,11 @@
+#使用前安装openai包：pip install openai / https://cloud.tencent.com/developer/article/2432695
+#使用时打开代理或VPN以访问DeepSeek API
+
 import json
 import tkinter as tk
+import os
 from tkinter import ttk, filedialog, messagebox
+from openai import OpenAI
 
 
 class GradeSystemApp:
@@ -14,6 +19,12 @@ class GradeSystemApp:
         self.all_records = []
         # 当前筛选后的记录
         self.current_records = []
+
+        # DeepSeek 客户端
+        self.client = OpenAI(
+            api_key="sk-0cd805ff1c944eaf836bb51095d765d5",   
+            base_url="https://api.deepseek.com"
+        )
 
         # ===== 样式设置 =====
         style = ttk.Style()
@@ -117,6 +128,13 @@ class GradeSystemApp:
             style="Accent.TButton",
             command=self.calculate
         ).pack(side=tk.LEFT, padx=(10, 0))
+
+        ttk.Button(
+            top_frame,
+            text="智能分析成绩",
+            style="Accent.TButton",
+            command=self.analyze_with_gpt
+        ).pack(side=tk.LEFT, padx=(6, 0))
 
         ttk.Button(
             top_frame,
@@ -337,6 +355,72 @@ class GradeSystemApp:
                 )
             self.text_output.insert(tk.END, "\n")
 
+
+    # ===== 调用 ChatGPT 进行智能分析 =====
+    def analyze_with_gpt(self):
+        """调用 ChatGPT API，对当前筛选的成绩进行智能分析"""
+        # 必须先有当前记录，并且已经计算过总评
+        if not self.current_records:
+            messagebox.showwarning("提示", "请先选择班级和课程并点击“计算成绩”后再进行智能分析。")
+            return
+
+        # 检查是否已有总评字段
+        for rec in self.current_records:
+            if "total" not in rec:
+                messagebox.showwarning("提示", "请先点击“计算成绩”生成总评成绩，然后再进行智能分析。")
+                return
+
+        # 组织简要的成绩数据文本
+        lines = []
+        for rec in self.current_records:
+            sid = rec.get("id", "")
+            name = rec.get("name", "")
+            daily = rec.get("daily", 0)
+            mid = rec.get("mid", 0)
+            final = rec.get("final", 0)
+            total = rec.get("total", 0)
+            lines.append(
+                f"ID:{sid}, 姓名:{name}, 平时:{daily}, 期中:{mid}, 期末:{final}, 总评:{total:.2f}"
+            )
+
+        data_block = "\n".join(lines)
+        cls = self.class_var.get().strip()
+        cour = self.course_var.get().strip()
+
+        prompt = (
+            "下面是某个班级某门课程的学生成绩数据（平时、期中、期末、总评）：\n"
+            f"班级：{cls}，课程：{cour}\n"
+            f"{data_block}\n\n"
+            "请你用简洁的中文，对本班成绩情况进行智能分析，重点包括："
+            "整体成绩水平，大致的优良/不及格比例，以及对教学和学生学习的改进建议。"
+            "要求：使用一段或两段连贯文字，不要使用列表，不要逐条重复原始数据。"
+        )
+
+        try:
+            resp = self.client.chat.completions.create(
+                model="deepseek-chat",
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "你是一名擅长分析学生成绩的教育数据分析助手。"
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt
+                    },
+                ],
+                temperature=0.3,
+            )
+            analysis_text = resp.choices[0].message.content.strip()
+        except Exception as e:
+            messagebox.showerror("错误", f"调用 ChatGPT API 失败：\n{e}")
+            return
+
+        # 将分析结果追加显示在下方文本框
+        self.text_output.insert(tk.END, "\n====== 智能分析结果 ======\n")
+        self.text_output.insert(tk.END, analysis_text + "\n")
+        self.text_output.see(tk.END)
+
     # ===== 根据总评返回等级 =====
     @staticmethod
     def get_level(total: float) -> str:
@@ -351,7 +435,7 @@ class GradeSystemApp:
         else:
             return "不及格"
 
-    # ===== 清空结果显示 =====
+    # ===== 清空结果显示（不清空文件数据）=====
     def clear_results(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
@@ -360,7 +444,7 @@ class GradeSystemApp:
             lbl.config(text=f"{key}：0 人，占 0.0%")
         self.text_output.delete("1.0", tk.END)
 
-
+# 主程序入口
 if __name__ == "__main__":
     root = tk.Tk()
     app = GradeSystemApp(root)

@@ -246,7 +246,7 @@ class TypingApp:
         self.entry_input.focus()
         self.update_accuracy_icon(None)
 
-
+# 主程序入口
 if __name__ == "__main__":
     root = tk.Tk()
     app = TypingApp(root)

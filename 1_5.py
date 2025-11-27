@@ -260,6 +260,8 @@ class BaseConverterApp:
         self.result_vars[16].set(hex_str)
 
 
+
+# 主程序入口
 if __name__ == "__main__":
     root = tk.Tk()
     app = BaseConverterApp(root)
